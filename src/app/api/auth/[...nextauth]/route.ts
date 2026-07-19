@@ -53,17 +53,30 @@ export const authOptions = {
     strategy: "jwt" as const,
   },
   callbacks: {
-    async jwt({ token, user }: { token: any; user: any }) {
+    async jwt({ token, user, trigger, session }: { token: any; user: any; trigger?: string; session?: any }) {
+      // For initial sign in
       if (user) {
-        token.role = user.role;
-        token.id = user.id;
+        // Fetch from DB to get the latest status, especially for Google OAuth which only returns basic info
+        const dbUser = await prisma.user.findUnique({ where: { email: user.email } });
+        if (dbUser) {
+          token.role = dbUser.role;
+          token.id = dbUser.id;
+          token.hasCompletedProfile = !!dbUser.idCard && !!dbUser.phone;
+        }
       }
+
+      // Handle session update after profile completion
+      if (trigger === "update" && session?.hasCompletedProfile) {
+        token.hasCompletedProfile = session.hasCompletedProfile;
+      }
+
       return token;
     },
     async session({ session, token }: { session: any; token: any }) {
       if (token) {
         session.user.role = token.role;
         session.user.id = token.id;
+        session.user.hasCompletedProfile = token.hasCompletedProfile;
       }
       return session;
     }
