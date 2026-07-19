@@ -2,10 +2,8 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { PDFDocument, rgb } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
-import fs from 'fs';
-import path from 'path';
 
 export async function GET(
   req: Request,
@@ -61,9 +59,14 @@ export async function GET(
     const page = pdfDoc.addPage([841.89, 595.28]);
     const { width, height } = page.getSize();
 
-    // Load fonts
-    const regularFontBytes = fs.readFileSync(path.join(process.cwd(), 'public', 'fonts', 'Sarabun-Regular.ttf'));
-    const boldFontBytes = fs.readFileSync(path.join(process.cwd(), 'public', 'fonts', 'Sarabun-Bold.ttf'));
+    const baseUrl = new URL(req.url).origin;
+    
+    // Load fonts using fetch to ensure it works on Vercel serverless environment
+    const regularFontRes = await fetch(`${baseUrl}/fonts/Sarabun-Regular.ttf`);
+    const regularFontBytes = await regularFontRes.arrayBuffer();
+    
+    const boldFontRes = await fetch(`${baseUrl}/fonts/Sarabun-Bold.ttf`);
+    const boldFontBytes = await boldFontRes.arrayBuffer();
     
     const regularFont = await pdfDoc.embedFont(regularFontBytes);
     const boldFont = await pdfDoc.embedFont(boldFontBytes);
