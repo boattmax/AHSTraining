@@ -54,6 +54,7 @@ export default async function TrainingRoom({ params }: { params: Promise<{ id: s
           courseId={course.id} 
           videoUrl={course.videoUrl} 
           initialProgress={initialProgress} 
+          initialIsCompleted={progress?.isCompleted || false}
         />
       </div>
     </div>

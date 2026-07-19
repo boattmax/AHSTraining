@@ -59,9 +59,16 @@ export default async function DashboardPage() {
                     {isCompleted ? '✓ เรียนจบแล้ว' : progress ? 'กำลังเรียน' : 'ยังไม่ได้เริ่ม'}
                   </span>
                   
-                  <Link href={`/training/${course.id}`} className="btn btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
-                    {isCompleted ? 'ดูทบทวน' : progress ? 'เรียนต่อ' : 'เริ่มเรียน'}
-                  </Link>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    {isCompleted && (
+                      <a href={`/api/certificates/${course.id}`} target="_blank" className="btn btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem', borderColor: 'var(--success)', color: 'var(--success)' }}>
+                        📜 โหลดเกียรติบัตร
+                      </a>
+                    )}
+                    <Link href={`/training/${course.id}`} className="btn btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
+                      {isCompleted ? 'ดูทบทวน' : progress ? 'เรียนต่อ' : 'เริ่มเรียน'}
+                    </Link>
+                  </div>
                 </div>
               </div>
             );

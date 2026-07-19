@@ -6,19 +6,21 @@ interface TrainingPlayerProps {
   courseId: string;
   videoUrl: string;
   initialProgress: number;
+  initialIsCompleted?: boolean;
 }
 
-export default function TrainingPlayer({ courseId, videoUrl, initialProgress }: TrainingPlayerProps) {
+export default function TrainingPlayer({ courseId, videoUrl, initialProgress, initialIsCompleted = false }: TrainingPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [maxAllowedTime, setMaxAllowedTime] = useState(initialProgress);
   const [isWarningVisible, setIsWarningVisible] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(initialIsCompleted);
 
   // Initialize video to the last watched position
   useEffect(() => {
-    if (videoRef.current && initialProgress > 0) {
+    if (videoRef.current && initialProgress > 0 && !isCompleted) {
       videoRef.current.currentTime = initialProgress;
     }
-  }, [initialProgress]);
+  }, [initialProgress, isCompleted]);
 
   // Anti-cheat: No Tab Switching (Visibility API)
   useEffect(() => {
@@ -78,6 +80,7 @@ export default function TrainingPlayer({ courseId, videoUrl, initialProgress }: 
   const handleEnded = () => {
     if (videoRef.current) {
       saveProgress(videoRef.current.currentTime, true);
+      setIsCompleted(true);
       alert('ยินดีด้วย! คุณเรียนจบหลักสูตรนี้แล้ว');
     }
   };
@@ -113,9 +116,21 @@ export default function TrainingPlayer({ courseId, videoUrl, initialProgress }: 
         style={{ width: '100%', borderRadius: '1rem', background: 'black' }}
       />
       
-      <div style={{ marginTop: '1rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
-        <i>หมายเหตุ: ระบบจะบันทึกความคืบหน้าอัตโนมัติ ห้ามข้ามวิดีโอหรือสลับหน้าต่าง</i>
-      </div>
+      {isCompleted && (
+        <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(40, 167, 69, 0.1)', borderRadius: '1rem', border: '1px solid var(--success)', textAlign: 'center' }}>
+          <h3 style={{ color: 'var(--success)', marginBottom: '1rem' }}>🎉 ยินดีด้วย! คุณเรียนจบหลักสูตรนี้แล้ว</h3>
+          <p style={{ marginBottom: '1.5rem' }}>คุณสามารถดาวน์โหลดใบประกาศนียบัตรได้ทันที</p>
+          <a href={`/api/certificates/${courseId}`} target="_blank" className="btn btn-primary" style={{ display: 'inline-block', fontSize: '1.1rem', padding: '0.75rem 2rem' }}>
+            📜 ดาวน์โหลดเกียรติบัตร (PDF)
+          </a>
+        </div>
+      )}
+      
+      {!isCompleted && (
+        <div style={{ marginTop: '1rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+          <i>หมายเหตุ: ระบบจะบันทึกความคืบหน้าอัตโนมัติ ห้ามข้ามวิดีโอหรือสลับหน้าต่าง</i>
+        </div>
+      )}
     </div>
   );
 }
