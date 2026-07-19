@@ -58,10 +58,6 @@ export default function ProfileForm({ user }: { user: any }) {
     }
   };
 
-  const handleLinkGoogle = () => {
-    signIn('google', { callbackUrl: '/profile' });
-  };
-
   return (
     <div className="glass-panel" style={{ padding: '2rem' }}>
       <h1 className="text-gradient" style={{ marginBottom: '2rem' }}>ข้อมูลส่วนตัว (Profile)</h1>
