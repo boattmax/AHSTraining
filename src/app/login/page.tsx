@@ -2,15 +2,28 @@
 
 import React, { useState } from 'react';
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import styles from './page.module.css';
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const authError = searchParams.get('error');
+  
   const [idCard, setIdCard] = useState('');
   const [dob, setDob] = useState('');
-  const [error, setError] = useState('');
+  
+  // Show error from URL if present
+  let initialError = '';
+  if (authError === 'OAuthAccountNotLinked') {
+    initialError = 'อีเมลนี้ถูกใช้งานแล้ว กรุณาเข้าสู่ระบบด้วยรหัสบัตรประชาชนแล้วไปที่หน้าโปรไฟล์เพื่อเชื่อมต่อ Google';
+  } else if (authError) {
+    initialError = 'เกิดข้อผิดพลาดในการเข้าสู่ระบบด้วย Google';
+  }
+  
+  const [error, setError] = useState(initialError);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -94,5 +107,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div style={{ textAlign: 'center', padding: '2rem' }}>กำลังโหลด...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }
