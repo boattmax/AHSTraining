@@ -11,24 +11,18 @@ export default async function ProfilePage() {
     redirect("/login");
   }
 
-  // Fetch full user details and their linked accounts
+  // Fetch full user details
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    include: {
-      accounts: true,
-    }
   });
 
   if (!user) {
     redirect("/login");
   }
 
-  // Check if Google account is linked
-  const isGoogleLinked = user.accounts.some(acc => acc.provider === 'google');
-
   return (
     <div className="container" style={{ margin: '2rem auto', maxWidth: '800px' }}>
-      <ProfileForm user={user} isGoogleLinked={isGoogleLinked} />
+      <ProfileForm user={user} />
     </div>
   );
 }

@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useState } from 'react';
-import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
-export default function ProfileForm({ user, isGoogleLinked }: { user: any, isGoogleLinked: boolean }) {
+export default function ProfileForm({ user }: { user: any }) {
   const router = useRouter();
   
   const formatDateForInput = (dateString: Date | null) => {
@@ -122,29 +121,6 @@ export default function ProfileForm({ user, isGoogleLinked }: { user: any, isGoo
           <button type="submit" className="btn btn-primary" disabled={isLoading} style={{ marginTop: '1rem', width: 'fit-content' }}>
             {isLoading ? 'กำลังบันทึกข้อมูล...' : 'บันทึกข้อมูลส่วนตัว'}
           </button>
-        </form>
-
-        {/* Account Linking Section */}
-        <div style={{ width: '300px', background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '1rem', border: '1px solid var(--border)', height: 'fit-content' }}>
-          <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>การเชื่อมต่อบัญชี</h3>
-          
-          <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1.5rem', lineHeight: 1.6 }}>
-            การเชื่อมต่อกับบัญชี Google จะช่วยให้คุณสามารถเข้าสู่ระบบผ่าน Google ในครั้งต่อไปได้อย่างสะดวกสบาย
-          </p>
-
-          {isGoogleLinked ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem', backgroundColor: 'rgba(16, 185, 129, 0.1)', borderRadius: '0.5rem', border: '1px solid var(--success)', color: 'var(--success)' }}>
-              <span style={{ fontSize: '1.2rem' }}>✓</span>
-              <span>เชื่อมต่อกับ Google แล้ว</span>
-            </div>
-          ) : (
-            <button onClick={handleLinkGoogle} className="btn" style={{ width: '100%', backgroundColor: 'white', color: '#333', border: '1px solid #ddd', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', padding: '0.75rem' }}>
-              <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width={20} height={20} />
-              เชื่อมต่อกับ Google
-            </button>
-          )}
-        </div>
-
       </div>
     </div>
   );
