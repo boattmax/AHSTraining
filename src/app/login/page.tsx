@@ -8,8 +8,8 @@ import styles from './page.module.css';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [idCard, setIdCard] = useState('');
+  const [dob, setDob] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -20,13 +20,13 @@ export default function LoginPage() {
 
     try {
       const res = await signIn('credentials', {
-        email,
-        password,
+        idCard,
+        dob,
         redirect: false,
       });
 
       if (res?.error) {
-        setError('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
+        setError('หมายเลขบัตรประชาชนหรือวันเกิดไม่ถูกต้อง');
       } else {
         router.push('/dashboard');
         router.refresh();
@@ -51,23 +51,26 @@ export default function LoginPage() {
         
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.inputGroup}>
-            <label htmlFor="email">อีเมล</label>
+            <label htmlFor="idCard">หมายเลขบัตรประชาชน</label>
             <input 
-              type="email" 
-              id="email" 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
+              type="text" 
+              id="idCard" 
+              value={idCard} 
+              maxLength={13}
+              onChange={(e) => setIdCard(e.target.value)} 
+              placeholder="ไม่ต้องเติมขีด"
               required 
             />
           </div>
           
           <div className={styles.inputGroup}>
-            <label htmlFor="password">รหัสผ่าน</label>
+            <label htmlFor="dob">วัน/เดือน/ปีเกิด (พ.ศ.)</label>
             <input 
-              type="password" 
-              id="password" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
+              type="text" 
+              id="dob" 
+              value={dob} 
+              onChange={(e) => setDob(e.target.value)} 
+              placeholder="ตัวอย่าง 01/01/2510"
               required 
             />
           </div>

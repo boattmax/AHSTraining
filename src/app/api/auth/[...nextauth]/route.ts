@@ -15,28 +15,30 @@ export const authOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        idCard: { label: "หมายเลขบัตรประชาชน", type: "text" },
+        dob: { label: "วัน/เดือน/ปีเกิด (พ.ศ.)", type: "text" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        if (!credentials?.idCard || !credentials?.dob) {
           return null;
         }
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email }
+          where: { idCard: credentials.idCard }
         });
 
-        if (!user || !user.password) {
+        if (!user || !user.dob) {
           return null;
         }
 
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
+        // Parse DB DOB to DD/MM/YYYY (Buddhist Era)
+        const date = new Date(user.dob);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const yearBE = String(date.getFullYear() + 543);
+        const dbDobFormatted = `${day}/${month}/${yearBE}`;
 
-        if (!isPasswordValid) {
+        if (credentials.dob !== dbDobFormatted) {
           return null;
         }
 

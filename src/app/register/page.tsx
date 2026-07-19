@@ -15,7 +15,6 @@ export default function RegisterPage() {
     address: '',
     phone: '',
     email: '',
-    password: '',
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -104,11 +103,6 @@ export default function RegisterPage() {
               <label htmlFor="email">อีเมล</label>
               <input type="email" name="email" id="email" value={formData.email} onChange={handleChange} required />
             </div>
-          </div>
-
-          <div className={styles.inputGroup}>
-            <label htmlFor="password">รหัสผ่าน</label>
-            <input type="password" name="password" id="password" value={formData.password} onChange={handleChange} required minLength={6} />
           </div>
           
           <button type="submit" className="btn btn-primary" disabled={isLoading} style={{ marginTop: '1rem' }}>
