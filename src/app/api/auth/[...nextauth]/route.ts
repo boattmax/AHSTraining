@@ -56,27 +56,39 @@ export const authOptions = {
     strategy: "jwt" as const,
   },
   callbacks: {
-    async jwt({ token, user, trigger, session }: { token: any; user: any; trigger?: string; session?: any }) {
-      if (user) {
-        token.email = user.email;
-      }
-
-      // If we don't have hasCompletedProfile in the token, fetch it!
-      // This is necessary because on first Google OAuth login, the database user might just be created.
-      if (typeof token.hasCompletedProfile === 'undefined' && token.email) {
-        const dbUser = await prisma.user.findUnique({ where: { email: token.email } });
-        if (dbUser) {
-          token.role = dbUser.role;
-          token.id = dbUser.id;
-          token.hasCompletedProfile = !!dbUser.idCard && !!dbUser.phone;
+    async signIn({ user, account, profile }) {
+      try {
+        if (account?.provider === 'google') {
+          // You can perform custom logic here if needed
+          return true;
         }
+        return true;
+      } catch (error: any) {
+        console.error("SignIn Callback Error:", error);
+        return `/login?error=SignInCallbackError_${encodeURIComponent(error.message || 'unknown')}`;
       }
+    },
+    async jwt({ token, user, trigger, session }: { token: any; user: any; trigger?: string; session?: any }) {
+      try {
+        if (user) {
+          token.email = user.email;
+        }
 
-      // Handle session update after profile completion
-      if (trigger === "update" && session?.hasCompletedProfile) {
-        token.hasCompletedProfile = session.hasCompletedProfile;
+        if (typeof token.hasCompletedProfile === 'undefined' && token.email) {
+          const dbUser = await prisma.user.findUnique({ where: { email: token.email } });
+          if (dbUser) {
+            token.role = dbUser.role;
+            token.id = dbUser.id;
+            token.hasCompletedProfile = !!dbUser.idCard && !!dbUser.phone;
+          }
+        }
+
+        if (trigger === "update" && session?.hasCompletedProfile) {
+          token.hasCompletedProfile = session.hasCompletedProfile;
+        }
+      } catch (e: any) {
+        console.error("JWT Callback Error:", e);
       }
-
       return token;
     },
     async session({ session, token }: { session: any; token: any }) {
