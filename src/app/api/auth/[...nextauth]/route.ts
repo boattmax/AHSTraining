@@ -56,10 +56,14 @@ export const authOptions = {
   },
   callbacks: {
     async jwt({ token, user, trigger, session }: { token: any; user: any; trigger?: string; session?: any }) {
-      // For initial sign in
       if (user) {
-        // Fetch from DB to get the latest status, especially for Google OAuth which only returns basic info
-        const dbUser = await prisma.user.findUnique({ where: { email: user.email } });
+        token.email = user.email;
+      }
+
+      // If we don't have hasCompletedProfile in the token, fetch it!
+      // This is necessary because on first Google OAuth login, the database user might just be created.
+      if (typeof token.hasCompletedProfile === 'undefined' && token.email) {
+        const dbUser = await prisma.user.findUnique({ where: { email: token.email } });
         if (dbUser) {
           token.role = dbUser.role;
           token.id = dbUser.id;
