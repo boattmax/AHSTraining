@@ -5,7 +5,8 @@ import { redirect } from 'next/navigation';
 import TrainingPlayer from '@/components/TrainingPlayer';
 import Link from 'next/link';
 
-export default async function TrainingRoom({ params }: { params: { id: string } }) {
+export default async function TrainingRoom({ params }: { params: Promise<{ id: string }> }) {
+  const { id: courseId } = await params;
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user?.id) {
@@ -14,7 +15,7 @@ export default async function TrainingRoom({ params }: { params: { id: string } 
 
   // Fetch course and user progress
   const course = await prisma.course.findUnique({
-    where: { id: params.id },
+    where: { id: courseId },
   });
 
   if (!course) {
