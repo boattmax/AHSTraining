@@ -20,7 +20,7 @@ function LoginContent() {
   if (authError === 'OAuthAccountNotLinked') {
     initialError = 'อีเมลนี้ถูกใช้งานแล้ว กรุณาเข้าสู่ระบบด้วยรหัสบัตรประชาชนแล้วไปที่หน้าโปรไฟล์เพื่อเชื่อมต่อ Google';
   } else if (authError) {
-    initialError = 'เกิดข้อผิดพลาดในการเข้าสู่ระบบด้วย Google';
+    initialError = 'เกิดข้อผิดพลาดในการเข้าสู่ระบบด้วย Google (' + authError + ')';
   }
   
   const [error, setError] = useState(initialError);
