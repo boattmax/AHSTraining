@@ -56,7 +56,7 @@ export const authOptions = {
     strategy: "jwt" as const,
   },
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account, profile }: { user: any; account: any; profile?: any }) {
       try {
         if (account?.provider === 'google') {
           // You can perform custom logic here if needed
