@@ -1,66 +1,41 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="container">
+      <section style={{ textAlign: 'center', margin: '4rem 0' }}>
+        <h1 className="text-gradient" style={{ fontSize: '3rem', marginBottom: '1.5rem' }}>ยินดีต้อนรับสู่ AHSTraining</h1>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '1.125rem', maxWidth: '600px', margin: '0 auto 2.5rem' }}>
+          แพลตฟอร์มการอบรมออนไลน์ที่คุณสามารถเรียนรู้และรับเกียรติบัตรออนไลน์ได้ทันทีเมื่อผ่านเกณฑ์การอบรม
+        </p>
+        <Link href="/login" className="btn btn-primary" style={{ padding: '1rem 2rem', fontSize: '1.125rem' }}>
+          เริ่มต้นการอบรม
+        </Link>
+      </section>
+
+      <section style={{ margin: '4rem 0' }}>
+        <h2 style={{ textAlign: 'center', marginBottom: '2rem' }}>ข่าวประชาสัมพันธ์</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
+          {/* ข่าวตัวอย่าง - ในอนาคตจะดึงจากฐานข้อมูล */}
+          <div className="glass-panel" style={{ padding: '1.5rem' }}>
+            <div style={{ background: 'var(--border)', height: '150px', borderRadius: '0.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
+              ภาพประกอบ
+            </div>
+            <h3 style={{ fontSize: '1.25rem' }}>เปิดรับสมัครอบรมรอบใหม่</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '1rem' }}>วันที่ 10 ตุลาคม 2026</p>
+            <p>หลักสูตรใหม่เปิดรับสมัครแล้ววันนี้ รีบลงทะเบียนก่อนเต็ม!</p>
+          </div>
+          
+          <div className="glass-panel" style={{ padding: '1.5rem' }}>
+            <div style={{ background: 'var(--border)', height: '150px', borderRadius: '0.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
+              ภาพประกอบ
+            </div>
+            <h3 style={{ fontSize: '1.25rem' }}>อัปเดตระบบการรับเกียรติบัตร</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '1rem' }}>วันที่ 5 ตุลาคม 2026</p>
+            <p>ตอนนี้ผู้เข้าอบรมสามารถดาวน์โหลดเกียรติบัตรเป็นไฟล์ PDF ได้ทันทีหลังจบวิดีโอ</p>
+          </div>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </section>
     </div>
   );
 }
