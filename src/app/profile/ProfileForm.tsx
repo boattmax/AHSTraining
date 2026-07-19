@@ -121,6 +121,7 @@ export default function ProfileForm({ user }: { user: any }) {
           <button type="submit" className="btn btn-primary" disabled={isLoading} style={{ marginTop: '1rem', width: 'fit-content' }}>
             {isLoading ? 'กำลังบันทึกข้อมูล...' : 'บันทึกข้อมูลส่วนตัว'}
           </button>
+        </form>
       </div>
     </div>
   );
