@@ -116,6 +116,7 @@ export default function TrainingPlayer({ courseId, videoUrl, initialProgress, in
       )}
 
       <div style={{ position: 'relative', paddingTop: '56.25%', borderRadius: '1rem', overflow: 'hidden', background: 'black' }}>
+        {/* @ts-ignore */}
         <ReactPlayer
           ref={playerRef}
           url={videoUrl}
