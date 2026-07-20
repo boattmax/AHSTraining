@@ -12,15 +12,16 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  // Fetch available courses
-  const courses = await prisma.course.findMany({
-    orderBy: { createdAt: 'desc' }
+  // Fetch user's progress (which indicates enrollment)
+  const userProgress = await prisma.progress.findMany({
+    where: { userId: session.user.id },
+    include: {
+      course: true
+    },
+    orderBy: { updatedAt: 'desc' }
   });
 
-  // Fetch user's progress
-  const userProgress = await prisma.progress.findMany({
-    where: { userId: session.user.id }
-  });
+  const enrolledCourses = userProgress.map(p => p.course);
 
   const completedCount = userProgress.filter(p => p.hasPassedQuiz).length;
   const inProgressCount = userProgress.filter(p => !p.hasPassedQuiz).length;
@@ -39,8 +40,8 @@ export default async function DashboardPage() {
           <div style={{ background: 'rgba(255,255,255,0.1)', padding: '1rem 1.5rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <BookOpen size={32} color="var(--secondary)" />
             <div>
-              <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', margin: 0 }}>หลักสูตรทั้งหมด</p>
-              <p style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>{courses.length}</p>
+              <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', margin: 0 }}>หลักสูตรที่ลงทะเบียน</p>
+              <p style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>{enrolledCourses.length}</p>
             </div>
           </div>
           <div style={{ background: 'rgba(255,255,255,0.1)', padding: '1rem 1.5rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -61,17 +62,20 @@ export default async function DashboardPage() {
       </div>
 
       <h2 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <BookOpen size={28} /> หลักสูตรการอบรม (Training Courses)
+        <BookOpen size={28} /> หลักสูตรของฉัน (My Courses)
       </h2>
       
-      {courses.length === 0 ? (
+      {enrolledCourses.length === 0 ? (
         <div className="panel" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
           <BookOpen size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-          <p>ยังไม่มีหลักสูตรการอบรมในขณะนี้</p>
+          <p>คุณยังไม่ได้ลงทะเบียนเรียนหลักสูตรใดเลย</p>
+          <Link href="/" className="btn btn-primary" style={{ marginTop: '1rem' }}>
+            ไปเลือกดูหลักสูตร
+          </Link>
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '2rem' }}>
-          {courses.map(course => {
+          {enrolledCourses.map(course => {
             const progress = userProgress.find(p => p.courseId === course.id);
             const isCompleted = progress?.isCompleted || false;
             const hasPassedQuiz = progress?.hasPassedQuiz || false;

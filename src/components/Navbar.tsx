@@ -14,22 +14,21 @@ export default async function Navbar() {
           <span className="text-gradient">AHS</span>Training
         </Link>
 
-        <div className={styles.navLinks}>
-          <Link href="/" className={styles.navLink}>หน้าหลัก</Link>
-          
+        <ul className={styles.navLinks}>
+          <li><Link href="/" className={styles.navLink}>หน้าแรก</Link></li>
+          <li><Link href="/#courses" className={styles.navLink}>สำรวจหลักสูตร</Link></li>
           {session ? (
             <>
+              <li><Link href="/dashboard" className={styles.navLink}>ห้องเรียนของฉัน</Link></li>
               {session.user?.role === 'ADMIN' && (
-                <Link href="/admin" className={styles.navLink}>จัดการระบบ</Link>
+                <li><Link href="/admin" className={styles.navLink}>ผู้ดูแลระบบ</Link></li>
               )}
-              <Link href="/dashboard" className={styles.navLink}>ห้องอบรม</Link>
-              <Link href="/profile" className={styles.navLink}>ข้อมูลส่วนตัว</Link>
-              <a href="/api/auth/signout" className="btn btn-secondary">ออกจากระบบ</a>
+              <li><Link href="/api/auth/signout" className="btn btn-secondary">ออกจากระบบ</Link></li>
             </>
           ) : (
-            <Link href="/login" className="btn btn-primary">เข้าสู่ระบบ</Link>
+            <li><Link href="/login" className="btn btn-primary">เข้าสู่ระบบ</Link></li>
           )}
-        </div>
+        </ul>
       </div>
     </nav>
   );

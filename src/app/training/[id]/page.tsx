@@ -38,7 +38,11 @@ export default async function TrainingRoom({ params }: { params: Promise<{ id: s
     }
   });
 
-  const initialProgress = progress?.progressSeconds || 0;
+  if (!progress) {
+    redirect(`/courses/${course.id}`);
+  }
+
+  const initialProgress = progress.progressSeconds || 0;
 
   return (
     <div className="container" style={{ marginTop: '4rem', marginBottom: '4rem' }}>

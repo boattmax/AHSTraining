@@ -1,94 +1,116 @@
-import Link from 'next/link';
-import { BookOpen, Award, MonitorPlay, FileText } from 'lucide-react';
+import Link from "next/link";
+import { BookOpen, Users, Award, PlayCircle } from "lucide-react";
+import { prisma } from "@/lib/prisma";
 
-export default function Home() {
+export default async function Home() {
+  // Fetch available courses
+  const courses = await prisma.course.findMany({
+    orderBy: { createdAt: 'desc' }
+  });
+
   return (
     <div>
       {/* Hero Section */}
-      <section className="hero-section">
-        <div className="hero-pattern"></div>
-        <div className="container hero-content">
-          <div className="grid-2-col">
-            <div>
-              <h1 style={{ fontSize: '3rem', marginBottom: '1.5rem', lineHeight: 1.2, color: 'var(--primary)' }}>
-                ยกระดับความรู้สู่<br />
-                <span style={{ color: 'var(--secondary)' }}>ความเป็นมืออาชีพ</span>
-              </h1>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '1.125rem', marginBottom: '2.5rem', maxWidth: '500px' }}>
-                แพลตฟอร์มการอบรมออนไลน์ที่ออกแบบมาเพื่อการเรียนรู้ที่มีประสิทธิภาพ รับประกาศนียบัตรทันทีหลังเรียนจบและผ่านการทดสอบ
-              </p>
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <Link href="/login" className="btn btn-primary" style={{ padding: '1rem 2rem', fontSize: '1.125rem' }}>
-                  เข้าสู่ระบบ / เริ่มเรียน
-                </Link>
-                <Link href="#courses" className="btn btn-secondary" style={{ padding: '1rem 2rem', fontSize: '1.125rem' }}>
-                  ดูหลักสูตร
-                </Link>
-              </div>
+      <section style={{ 
+        padding: '6rem 2rem', 
+        background: 'linear-gradient(135deg, var(--background) 0%, rgba(59, 130, 246, 0.05) 100%)',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* Background Pattern */}
+        <div style={{
+          position: 'absolute',
+          top: 0, left: 0, right: 0, bottom: 0,
+          backgroundImage: 'radial-gradient(circle at 20px 20px, rgba(0,0,0,0.05) 2px, transparent 0)',
+          backgroundSize: '40px 40px',
+          zIndex: 0
+        }} />
+
+        <div className="container grid-2-col" style={{ alignItems: 'center', position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <h1 style={{ fontSize: '3.5rem', lineHeight: 1.2, borderBottom: 'none', marginBottom: 0, color: 'var(--primary)' }}>
+              เรียนรู้ไร้ขีดจำกัดกับ <br />
+              <span className="text-gradient">AHS Training</span>
+            </h1>
+            <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: '500px' }}>
+              แพลตฟอร์มการเรียนรู้ออนไลน์แบบเปิด (MOOC) สำหรับพัฒนาทักษะวิชาชีพ 
+              เรียนรู้ได้ทุกที่ ทุกเวลา พร้อมรับใบประกาศนียบัตรเมื่อผ่านเกณฑ์
+            </p>
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+              <Link href="#courses" className="btn btn-primary" style={{ padding: '0.8rem 2rem', fontSize: '1.1rem' }}>
+                สำรวจหลักสูตร
+              </Link>
             </div>
-            
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              {/* Illustration placeholder */}
-              <div style={{ width: '100%', maxWidth: '400px', aspectRatio: '1/1', background: 'var(--panel-bg)', borderRadius: '50%', boxShadow: 'var(--shadow-lg)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '8px solid white', position: 'relative' }}>
-                <div style={{ position: 'absolute', inset: 10, borderRadius: '50%', border: '2px dashed var(--secondary)' }}></div>
-                <BookOpen size={120} color="var(--primary)" opacity={0.8} />
-              </div>
+          </div>
+          
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <div style={{ background: 'white', padding: '2.5rem', borderRadius: '50%', boxShadow: '0 20px 40px rgba(0,0,0,0.08)', border: '8px solid white' }}>
+              <BookOpen size={160} color="var(--primary)" opacity={0.8} />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section style={{ padding: '6rem 0', background: 'var(--bg-secondary)' }}>
-        <div className="container">
-          <h2 className="section-title">ทำไมต้องเรียนกับเรา?</h2>
-          <div className="grid-3-col" style={{ marginTop: '3rem' }}>
-            <div className="panel" style={{ padding: '2rem', textAlign: 'center' }}>
-              <div style={{ display: 'flex', justifyContent: 'center' }}><MonitorPlay className="feature-icon" /></div>
-              <h3>เรียนออนไลน์ 24 ชม.</h3>
-              <p style={{ color: 'var(--text-secondary)' }}>เข้าถึงเนื้อหาการอบรมได้ทุกที่ ทุกเวลา ตามความสะดวกของคุณ</p>
-            </div>
-            <div className="panel" style={{ padding: '2rem', textAlign: 'center' }}>
-              <div style={{ display: 'flex', justifyContent: 'center' }}><FileText className="feature-icon" /></div>
-              <h3>ประเมินผลความรู้</h3>
-              <p style={{ color: 'var(--text-secondary)' }}>มีระบบแบบทดสอบท้ายบทเรียนเพื่อทบทวนและวัดความเข้าใจ</p>
-            </div>
-            <div className="panel" style={{ padding: '2rem', textAlign: 'center' }}>
-              <div style={{ display: 'flex', justifyContent: 'center' }}><Award className="feature-icon" /></div>
-              <h3>รับเกียรติบัตรทันที</h3>
-              <p style={{ color: 'var(--text-secondary)' }}>เมื่อเรียนจบและสอบผ่าน สามารถดาวน์โหลด e-Certificate ได้ทันที</p>
-            </div>
+      {/* Stats / Features */}
+      <section className="container" style={{ padding: '4rem 2rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem' }}>
+          <div className="panel" style={{ padding: '2rem', textAlign: 'center' }}>
+            <PlayCircle size={40} color="var(--primary)" style={{ margin: '0 auto 1rem' }} />
+            <h3>เรียนออนไลน์ 24 ชม.</h3>
+            <p style={{ color: 'var(--text-secondary)' }}>เนื้อหาวิดีโอคุณภาพสูง เรียนได้ทุกที่ ทุกเวลา</p>
+          </div>
+          <div className="panel" style={{ padding: '2rem', textAlign: 'center' }}>
+            <Users size={40} color="var(--primary)" style={{ margin: '0 auto 1rem' }} />
+            <h3>วัดผลความรู้</h3>
+            <p style={{ color: 'var(--text-secondary)' }}>มีแบบทดสอบเพื่อประเมินผลความเข้าใจ</p>
+          </div>
+          <div className="panel" style={{ padding: '2rem', textAlign: 'center' }}>
+            <Award size={40} color="var(--primary)" style={{ margin: '0 auto 1rem' }} />
+            <h3>ใบประกาศนียบัตร</h3>
+            <p style={{ color: 'var(--text-secondary)' }}>รับเกียรติบัตรทันทีเมื่อเรียนจบและสอบผ่านเกณฑ์</p>
           </div>
         </div>
       </section>
 
-      {/* News Section */}
-      <section style={{ padding: '6rem 0' }}>
+      {/* Public Course Catalog */}
+      <section id="courses" style={{ padding: '5rem 2rem', background: 'var(--bg-secondary)' }}>
         <div className="container">
-          <h2 className="section-title">ข่าวประชาสัมพันธ์</h2>
-          <div className="grid-3-col" style={{ marginTop: '3rem' }}>
-            <div className="panel" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ background: 'var(--border)', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ color: 'var(--text-secondary)' }}>ภาพประกอบข่าว</span>
-              </div>
-              <div style={{ padding: '1.5rem', flex: 1 }}>
-                <p style={{ color: 'var(--secondary)', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem' }}>10 ตุลาคม 2026</p>
-                <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>เปิดรับสมัครอบรมรอบใหม่</h3>
-                <p style={{ color: 'var(--text-secondary)' }}>หลักสูตรใหม่เปิดรับสมัครแล้ววันนี้ รีบลงทะเบียนก่อนเต็ม!</p>
-              </div>
-            </div>
-            
-            <div className="panel" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ background: 'var(--border)', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ color: 'var(--text-secondary)' }}>ภาพประกอบข่าว</span>
-              </div>
-              <div style={{ padding: '1.5rem', flex: 1 }}>
-                <p style={{ color: 'var(--secondary)', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem' }}>5 ตุลาคม 2026</p>
-                <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>อัปเดตระบบแบบทดสอบ</h3>
-                <p style={{ color: 'var(--text-secondary)' }}>เพิ่มระบบแบบทดสอบก่อนรับเกียรติบัตร เพื่อประเมินความรู้ผู้เข้าอบรม</p>
-              </div>
-            </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem' }}>
+            <h2 className="section-title" style={{ margin: 0 }}>หลักสูตรที่เปิดสอน (Course Catalog)</h2>
           </div>
+          
+          {courses.length === 0 ? (
+            <div className="panel" style={{ padding: '5rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+              <BookOpen size={64} style={{ margin: '0 auto 1rem', opacity: 0.3 }} />
+              <p style={{ fontSize: '1.2rem' }}>กำลังเตรียมความพร้อมหลักสูตรเร็วๆ นี้</p>
+            </div>
+          ) : (
+            <div className="grid-3-col">
+              {courses.map(course => (
+                <div key={course.id} className="panel" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: 0 }}>
+                  {/* Course Thumbnail */}
+                  <div style={{ background: 'var(--border)', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', position: 'relative' }}>
+                    <PlayCircle size={48} opacity={0.3} />
+                    <div style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'var(--primary)', color: 'white', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 'bold' }}>
+                      เปิดรับสมัคร
+                    </div>
+                  </div>
+                  
+                  <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                    <h3 style={{ marginBottom: '0.75rem', fontSize: '1.25rem', lineHeight: 1.4, border: 'none' }}>{course.title}</h3>
+                    <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', flexGrow: 1, fontSize: '0.95rem', lineHeight: 1.6 }}>
+                      {course.description?.substring(0, 100) || 'หลักสูตรนี้ไม่มีคำอธิบาย'}
+                      {course.description && course.description.length > 100 && '...'}
+                    </p>
+                    
+                    <Link href={`/courses/${course.id}`} className="btn btn-primary" style={{ width: '100%', textAlign: 'center', padding: '0.75rem' }}>
+                      รายละเอียดเพิ่มเติม
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </div>
