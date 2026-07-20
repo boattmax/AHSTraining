@@ -24,7 +24,6 @@ export default async function AdminLayout({
             <Link href="/admin" className="btn btn-secondary" style={{ justifyContent: 'flex-start' }}>ภาพรวม</Link>
             <Link href="/admin/users" className="btn btn-secondary" style={{ justifyContent: 'flex-start' }}>จัดการผู้ใช้งาน</Link>
             <Link href="/admin/courses" className="btn btn-secondary" style={{ justifyContent: 'flex-start' }}>จัดการหลักสูตร</Link>
-            <Link href="/admin/news" className="btn btn-secondary" style={{ justifyContent: 'flex-start' }}>จัดการข่าวสาร</Link>
           </nav>
         </div>
       </aside>
