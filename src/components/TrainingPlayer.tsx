@@ -91,6 +91,8 @@ export default function TrainingPlayer({ courseId, videoUrl, initialProgress, in
     setIsReady(true);
   };
 
+  const Player: any = ReactPlayer;
+
   return (
     <div style={{ position: 'relative', width: '100%', maxWidth: '800px', margin: '0 auto' }}>
       {isWarningVisible && (
@@ -116,8 +118,7 @@ export default function TrainingPlayer({ courseId, videoUrl, initialProgress, in
       )}
 
       <div style={{ position: 'relative', paddingTop: '56.25%', borderRadius: '1rem', overflow: 'hidden', background: 'black' }}>
-        {/* @ts-ignore */}
-        <ReactPlayer
+        <Player
           ref={playerRef}
           url={videoUrl}
           playing={playing}
