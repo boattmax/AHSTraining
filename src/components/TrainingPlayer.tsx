@@ -2,6 +2,7 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
+import ReactPlayer from 'react-player';
 
 interface TrainingPlayerProps {
   courseId: string;
@@ -12,24 +13,19 @@ interface TrainingPlayerProps {
 }
 
 export default function TrainingPlayer({ courseId, videoUrl, initialProgress, initialIsCompleted = false, initialHasPassedQuiz = false }: TrainingPlayerProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const playerRef = useRef<ReactPlayer>(null);
   const [maxAllowedTime, setMaxAllowedTime] = useState(initialProgress);
   const [isWarningVisible, setIsWarningVisible] = useState(false);
   const [isCompleted, setIsCompleted] = useState(initialIsCompleted);
   const [hasPassedQuiz, setHasPassedQuiz] = useState(initialHasPassedQuiz);
-
-  // Initialize video to the last watched position
-  useEffect(() => {
-    if (videoRef.current && initialProgress > 0 && !isCompleted) {
-      videoRef.current.currentTime = initialProgress;
-    }
-  }, [initialProgress, isCompleted]);
+  const [playing, setPlaying] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   // Anti-cheat: No Tab Switching (Visibility API)
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.hidden && videoRef.current && !videoRef.current.paused) {
-        videoRef.current.pause();
+      if (document.hidden && playing) {
+        setPlaying(false);
         setIsWarningVisible(true);
       }
     };
@@ -38,18 +34,18 @@ export default function TrainingPlayer({ courseId, videoUrl, initialProgress, in
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, []);
+  }, [playing]);
 
   // Sync progress to server every 10 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      if (videoRef.current && !videoRef.current.paused) {
-        saveProgress(videoRef.current.currentTime, false);
+      if (playing && playerRef.current) {
+        saveProgress(playerRef.current.getCurrentTime(), false);
       }
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [courseId]);
+  }, [playing, courseId]);
 
   const saveProgress = async (currentSeconds: number, completed: boolean) => {
     try {
@@ -66,25 +62,33 @@ export default function TrainingPlayer({ courseId, videoUrl, initialProgress, in
     }
   };
 
-  const handleTimeUpdate = () => {
-    if (!videoRef.current) return;
-
-    const currentTime = videoRef.current.currentTime;
+  const handleProgress = (state: { playedSeconds: number }) => {
+    const currentTime = state.playedSeconds;
     
     // Anti-cheat: No Seeking Forward
-    // Allow 2 seconds buffer for normal playback drift
-    if (currentTime > maxAllowedTime + 2) {
-      videoRef.current.currentTime = maxAllowedTime;
+    // Allow 3 seconds buffer for normal playback drift
+    if (currentTime > maxAllowedTime + 3) {
+      if (playerRef.current) {
+        playerRef.current.seekTo(maxAllowedTime, 'seconds');
+      }
     } else {
       setMaxAllowedTime(Math.max(maxAllowedTime, currentTime));
     }
   };
 
   const handleEnded = () => {
-    if (videoRef.current) {
-      saveProgress(videoRef.current.currentTime, true);
+    if (playerRef.current) {
+      saveProgress(playerRef.current.getCurrentTime(), true);
       setIsCompleted(true);
+      setPlaying(false);
     }
+  };
+
+  const handleReady = () => {
+    if (!isReady && initialProgress > 0 && !isCompleted) {
+      playerRef.current?.seekTo(initialProgress, 'seconds');
+    }
+    setIsReady(true);
   };
 
   return (
@@ -101,22 +105,40 @@ export default function TrainingPlayer({ courseId, videoUrl, initialProgress, in
           <button 
             className="btn btn-primary" 
             style={{ marginTop: '1rem' }}
-            onClick={() => setIsWarningVisible(false)}
+            onClick={() => {
+              setIsWarningVisible(false);
+              setPlaying(true);
+            }}
           >
             ฉันเข้าใจแล้ว (รับชมต่อ)
           </button>
         </div>
       )}
 
-      <video
-        ref={videoRef}
-        src={videoUrl}
-        controls
-        controlsList="nodownload"
-        onTimeUpdate={handleTimeUpdate}
-        onEnded={handleEnded}
-        style={{ width: '100%', borderRadius: '1rem', background: 'black' }}
-      />
+      <div style={{ position: 'relative', paddingTop: '56.25%', borderRadius: '1rem', overflow: 'hidden', background: 'black' }}>
+        <ReactPlayer
+          ref={playerRef}
+          url={videoUrl}
+          playing={playing}
+          controls={true}
+          onReady={handleReady}
+          onProgress={handleProgress}
+          onEnded={handleEnded}
+          onPlay={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
+          width="100%"
+          height="100%"
+          style={{ position: 'absolute', top: 0, left: 0 }}
+          config={{
+            youtube: {
+              playerVars: { 
+                disablekb: 1, // Disable keyboard shortcuts to prevent skipping
+                modestbranding: 1
+              }
+            }
+          }}
+        />
+      </div>
       
       {isCompleted && !hasPassedQuiz && (
         <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '1rem', border: '1px solid var(--primary)', textAlign: 'center' }}>
