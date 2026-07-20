@@ -13,7 +13,7 @@ interface TrainingPlayerProps {
 }
 
 export default function TrainingPlayer({ courseId, videoUrl, initialProgress, initialIsCompleted = false, initialHasPassedQuiz = false }: TrainingPlayerProps) {
-  const playerRef = useRef<ReactPlayer>(null);
+  const playerRef = useRef<any>(null);
   const [maxAllowedTime, setMaxAllowedTime] = useState(initialProgress);
   const [isWarningVisible, setIsWarningVisible] = useState(false);
   const [isCompleted, setIsCompleted] = useState(initialIsCompleted);
