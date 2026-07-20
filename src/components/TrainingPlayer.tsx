@@ -136,7 +136,7 @@ export default function TrainingPlayer({ courseId, videoUrl, initialProgress, in
                 modestbranding: 1
               }
             }
-          }}
+          } as any}
         />
       </div>
       
