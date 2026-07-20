@@ -122,7 +122,7 @@ export default function TrainingPlayer({ courseId, videoUrl, initialProgress, in
           playing={playing}
           controls={true}
           onReady={handleReady}
-          onProgress={handleProgress}
+          onProgress={handleProgress as any}
           onEnded={handleEnded}
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
