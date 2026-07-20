@@ -46,7 +46,7 @@ export default async function TrainingRoom({ params }: { params: Promise<{ id: s
         ← กลับไปหน้ารายการหลักสูตร
       </Link>
       
-      <div className="glass-panel" style={{ padding: '2rem' }}>
+      <div className="panel" style={{ padding: '2rem' }}>
         <h1 className="text-gradient" style={{ marginBottom: '1rem' }}>{course.title}</h1>
         {course.description && <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>{course.description}</p>}
 
@@ -55,6 +55,7 @@ export default async function TrainingRoom({ params }: { params: Promise<{ id: s
           videoUrl={course.videoUrl} 
           initialProgress={initialProgress} 
           initialIsCompleted={progress?.isCompleted || false}
+          initialHasPassedQuiz={progress?.hasPassedQuiz || false}
         />
       </div>
     </div>

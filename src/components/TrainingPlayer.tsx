@@ -1,19 +1,22 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from 'react';
+import Link from 'next/link';
 
 interface TrainingPlayerProps {
   courseId: string;
   videoUrl: string;
   initialProgress: number;
   initialIsCompleted?: boolean;
+  initialHasPassedQuiz?: boolean;
 }
 
-export default function TrainingPlayer({ courseId, videoUrl, initialProgress, initialIsCompleted = false }: TrainingPlayerProps) {
+export default function TrainingPlayer({ courseId, videoUrl, initialProgress, initialIsCompleted = false, initialHasPassedQuiz = false }: TrainingPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [maxAllowedTime, setMaxAllowedTime] = useState(initialProgress);
   const [isWarningVisible, setIsWarningVisible] = useState(false);
   const [isCompleted, setIsCompleted] = useState(initialIsCompleted);
+  const [hasPassedQuiz, setHasPassedQuiz] = useState(initialHasPassedQuiz);
 
   // Initialize video to the last watched position
   useEffect(() => {
@@ -81,7 +84,6 @@ export default function TrainingPlayer({ courseId, videoUrl, initialProgress, in
     if (videoRef.current) {
       saveProgress(videoRef.current.currentTime, true);
       setIsCompleted(true);
-      alert('ยินดีด้วย! คุณเรียนจบหลักสูตรนี้แล้ว');
     }
   };
 
@@ -116,9 +118,19 @@ export default function TrainingPlayer({ courseId, videoUrl, initialProgress, in
         style={{ width: '100%', borderRadius: '1rem', background: 'black' }}
       />
       
-      {isCompleted && (
+      {isCompleted && !hasPassedQuiz && (
+        <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '1rem', border: '1px solid var(--primary)', textAlign: 'center' }}>
+          <h3 style={{ color: 'var(--primary)', marginBottom: '1rem' }}>🎉 คุณรับชมวิดีโอจบแล้ว!</h3>
+          <p style={{ marginBottom: '1.5rem' }}>กรุณาทำแบบทดสอบเพื่อรับเกียรติบัตร</p>
+          <Link href={`/training/${courseId}/quiz`} className="btn btn-primary" style={{ display: 'inline-block', fontSize: '1.1rem', padding: '0.75rem 2rem' }}>
+            📝 ทำแบบทดสอบ
+          </Link>
+        </div>
+      )}
+
+      {isCompleted && hasPassedQuiz && (
         <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(40, 167, 69, 0.1)', borderRadius: '1rem', border: '1px solid var(--success)', textAlign: 'center' }}>
-          <h3 style={{ color: 'var(--success)', marginBottom: '1rem' }}>🎉 ยินดีด้วย! คุณเรียนจบหลักสูตรนี้แล้ว</h3>
+          <h3 style={{ color: 'var(--success)', marginBottom: '1rem' }}>✅ คุณสอบผ่านแล้ว!</h3>
           <p style={{ marginBottom: '1.5rem' }}>คุณสามารถดาวน์โหลดใบประกาศนียบัตรได้ทันที</p>
           <a href={`/api/certificates/${courseId}`} target="_blank" className="btn btn-primary" style={{ display: 'inline-block', fontSize: '1.1rem', padding: '0.75rem 2rem' }}>
             📜 ดาวน์โหลดเกียรติบัตร (PDF)

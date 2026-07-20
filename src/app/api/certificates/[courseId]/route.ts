@@ -22,7 +22,7 @@ export async function GET(
       where: { email: session.user.email },
       include: {
         progresses: {
-          where: { courseId, isCompleted: true },
+          where: { courseId, isCompleted: true, hasPassedQuiz: true },
         }
       }
     });
@@ -32,7 +32,7 @@ export async function GET(
     }
 
     if (!user.progresses || user.progresses.length === 0) {
-      return NextResponse.json({ message: 'Course not completed yet' }, { status: 403 });
+      return NextResponse.json({ message: 'Course not completed or quiz not passed yet' }, { status: 403 });
     }
 
     const course = await prisma.course.findUnique({

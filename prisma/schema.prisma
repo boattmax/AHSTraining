@@ -22,6 +22,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   progresses    Progress[]
+  quizAttempts  QuizAttempt[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -73,6 +74,8 @@ model Course {
   videoUrl    String     // URL to video on Supabase
   duration    Int?       // Duration in seconds (optional)
   progresses  Progress[]
+  questions   Question[]
+  quizAttempts QuizAttempt[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 }
@@ -83,6 +86,7 @@ model Progress {
   courseId        String
   progressSeconds Int      @default(0) // Time watched in seconds
   isCompleted     Boolean  @default(false)
+  hasPassedQuiz   Boolean  @default(false)
   completedAt     DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -91,6 +95,38 @@ model Progress {
   course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@unique([userId, courseId])
+}
+
+model Question {
+  id        String   @id @default(cuid())
+  courseId  String
+  text      String   @db.Text
+  options   Option[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+}
+
+model Option {
+  id         String   @id @default(cuid())
+  questionId String
+  text       String
+  isCorrect  Boolean  @default(false)
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model QuizAttempt {
+  id        String   @id @default(cuid())
+  userId    String
+  courseId  String
+  score     Float
+  passed    Boolean
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 }
 
 model News {
